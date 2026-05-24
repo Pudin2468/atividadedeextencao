@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Saúde & Hidratação</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Tracker: Peso, Altura e Água</h1>
+    </header>
+
+    <main>
+      <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-bottom:8px">
+        <a class="btn" href="/export">Exportar CSV (link)</a>
+        <button id="exportBtn" class="btn">Exportar CSV (fetch)</button>
+      </div>
+      <section class="form-card">
+        <h2>Registrar dados</h2>
+        <form action="{{ url_for('add_record') }}" method="post" id="recordForm">
+          <label>Nome
+            <input type="text" name="name" maxlength="120" placeholder="Seu nome (opcional)" value="{{ last_name if last_name is not none else '' }}">
+          </label>
+          <label>Altura (cm)
+            <input type="number" name="height_cm" step="0.1" required min="30" max="300">
+          </label>
+          <label>Peso (kg)
+            <input type="number" name="weight_kg" step="0.1" required min="2" max="500">
+          </label>
+          <label>Água por dia (litros)
+            <input type="number" name="water_l" step="0.01" required min="0" max="20">
+          </label>
+          <div class="form-actions">
+            <button type="submit">Salvar</button>
+            <button type="button" id="clearBtn">Limpar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="cards">
+        <div class="card">
+          <h3>Último peso</h3>
+          <p id="lastWeight">{{ last_weight if last_weight is not none else '—' }}</p>
+        </div>
+        <div class="card">
+          <h3>Média de água</h3>
+          <p id="avgWater">{{ avg_water if avg_water is not none else '—' }} L</p>
+        </div>
+        <div class="card">
+          <h3>IMC atual</h3>
+          <p id="lastImc">—</p>
+          <small id="imcClass">—</small>
+        </div>
+      </section>
+
+      <section class="charts">
+        <div class="chart-card">
+          <h3>Hidratação (diária)</h3>
+          <canvas id="waterChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Evolução do peso</h3>
+          <canvas id="weightChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Evolução do IMC</h3>
+          <canvas id="imcChart"></canvas>
+        </div>
+      </section>
+
+      <section class="history">
+        <h2>Histórico de registros</h2>
+        <table id="historyTable">
+          <thead>
+            <tr><th>Data</th><th>Nome</th><th>Altura (cm)</th><th>Peso (kg)</th><th>Água (L)</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- ICMS removed; IMC shown above and stored per record -->
+    </main>
+
+    <footer>
+      <small>Aplicação local — dados armazenados em SQLite</small>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
